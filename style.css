@@ -1,0 +1,698 @@
+/* ============================================================================
+   CURATIA — style.css
+   Design concept: a "curated library" aesthetic — cool sage paper tones,
+   a deep violet brand color, warm gold used only for match scores and
+   ratings (like a wax seal of approval), and genre tags styled like little
+   ticket stubs. Fraunces (serif, expressive) carries headlines; Inter
+   carries body text and UI chrome.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1. DESIGN TOKENS
+   --------------------------------------------------------------------------- */
+
+:root {
+  /* Light theme (default) */
+  --paper: #eff3ec;
+  --card: #ffffff;
+  --ink: #1c2a22;
+  --ink-muted: #5b6b60;
+  --border: #dce3d9;
+  --violet: #4a3f7a;
+  --violet-strong: #35305c;
+  --violet-tint: #ece9f7;
+  --gold: #c98a2b;
+  --gold-tint: #faedd3;
+  --coral: #c9432f;
+  --coral-tint: #f8e2de;
+  --shadow: 0 16px 40px -20px rgba(28, 42, 34, 0.25);
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", "Segoe UI", sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+}
+
+[data-theme="dark"] {
+  --paper: #17151f;
+  --card: #211f2c;
+  --ink: #ede7f3;
+  --ink-muted: #a79fc2;
+  --border: #322e42;
+  --violet: #9689e0;
+  --violet-strong: #b6acef;
+  --violet-tint: #2a2640;
+  --gold: #e8b45c;
+  --gold-tint: #33291a;
+  --coral: #e8776a;
+  --coral-tint: #3a2420;
+  --shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.6);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+img { max-width: 100%; display: block; }
+
+/* Faint dotted texture in the background, like paper grain */
+.bg-texture {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(currentColor 1px, transparent 1px);
+  background-size: 22px 22px;
+  color: var(--ink);
+  opacity: 0.035;
+}
+
+main { position: relative; z-index: 1; }
+
+h1, h2, h3 { font-family: var(--font-display); margin: 0; color: var(--ink); }
+
+em { font-style: italic; color: var(--violet); }
+
+/* ---------------------------------------------------------------------------
+   2. NAVBAR
+   --------------------------------------------------------------------------- */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--violet);
+}
+
+.logo-mark { display: inline-flex; }
+
+.theme-toggle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+/* ---------------------------------------------------------------------------
+   3. HERO
+   --------------------------------------------------------------------------- */
+
+.hero {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 64px 28px 48px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.eyebrow {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--violet);
+  font-weight: 600;
+  margin: 0 0 14px;
+}
+
+.hero h1 {
+  font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+  line-height: 1.18;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+.hero-sub {
+  color: var(--ink-muted);
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 46ch;
+  margin: 0 0 26px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--violet);
+  color: #fff;
+}
+
+.btn-primary:hover { background: var(--violet-strong); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--border);
+}
+
+.btn-ghost:hover { background: var(--card); border-color: var(--ink-muted); }
+
+/* --- Ticket-style dashboard stub (signature element) --- */
+.dash-stub {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 26px 20px 18px;
+}
+
+.stub-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.stub-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 6px;
+  border-right: 1px dashed var(--border);
+}
+
+.stub-item:last-child { border-right: none; }
+
+.stub-value {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--violet);
+}
+
+.stub-label {
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+
+/* Perforated "ticket" edge under the stub */
+.stub-perf {
+  height: 14px;
+  margin: 16px -20px -18px;
+  background-image: radial-gradient(circle, var(--paper) 5px, transparent 5.5px);
+  background-size: 20px 20px;
+  background-position: 10px -7px;
+  border-top: 1px dashed var(--border);
+}
+
+/* ---------------------------------------------------------------------------
+   4. GENERIC SECTION LAYOUT
+   --------------------------------------------------------------------------- */
+
+.section {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 40px 28px;
+}
+
+.section-head { margin-bottom: 24px; }
+
+.section-head h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.section-head p { color: var(--ink-muted); margin: 0; font-size: 0.92rem; }
+
+.section-head.split {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.section-actions { display: flex; gap: 10px; }
+
+/* ---------------------------------------------------------------------------
+   5. TOOLBAR (search + filters)
+   --------------------------------------------------------------------------- */
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.search-box {
+  flex: 1 1 240px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: var(--ink-muted);
+}
+
+.search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.select-input {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------------
+   6. CATALOG GRID / ITEM CARDS
+   --------------------------------------------------------------------------- */
+
+.catalog-grid, .rec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.item-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+  animation: card-in 0.35s ease both;
+  transition: transform 0.18s ease;
+}
+
+.item-card:hover { transform: translateY(-4px); }
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.item-thumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--paper);
+}
+
+.item-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.item-eyebrow {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--violet);
+  font-weight: 600;
+}
+
+.item-title {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.item-desc {
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+}
+
+.item-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+/* --- Ticket-stub genre tags --- */
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-stub {
+  position: relative;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 4px 10px 4px 12px;
+  background: var(--violet-tint);
+  color: var(--violet);
+  border-radius: 999px 4px 4px 999px;
+  white-space: nowrap;
+}
+
+.tag-stub::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 3px;
+  background: var(--violet);
+  border-radius: 50%;
+}
+
+.tag-stub.matched {
+  background: var(--gold-tint);
+  color: var(--gold);
+}
+
+.tag-stub.matched::before { background: var(--gold); }
+
+.item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.add-btn {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--violet);
+  background: transparent;
+  color: var(--violet);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.add-btn:hover { background: var(--violet); color: #fff; }
+
+.add-btn.added {
+  background: var(--violet);
+  color: #fff;
+}
+
+/* ---------------------------------------------------------------------------
+   7. PREFERENCES SHELF
+   --------------------------------------------------------------------------- */
+
+.shelf {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.shelf-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 8px 6px 6px;
+  animation: card-in 0.25s ease both;
+}
+
+.shelf-chip img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.shelf-chip span {
+  font-size: 0.84rem;
+  font-weight: 600;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shelf-chip button {
+  border: none;
+  background: var(--coral-tint);
+  color: var(--coral);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+
+/* ---------------------------------------------------------------------------
+   8. RECOMMENDATIONS
+   --------------------------------------------------------------------------- */
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+  padding: 30px 0;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--violet);
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.rec-card {
+  position: relative;
+}
+
+.match-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 56px;
+  height: 56px;
+  z-index: 2;
+}
+
+.match-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+
+.ring-track {
+  fill: none;
+  stroke: color-mix(in srgb, var(--card) 60%, var(--border));
+  stroke-width: 5;
+}
+
+.ring-fill {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 169.6; /* 2 * PI * 27 */
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.match-pct {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.match-genres {
+  font-size: 0.74rem;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+
+/* ---------------------------------------------------------------------------
+   9. EMPTY STATES
+   --------------------------------------------------------------------------- */
+
+.empty-state {
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+  padding: 30px 20px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card);
+}
+
+/* ---------------------------------------------------------------------------
+   10. HOW IT WORKS
+   --------------------------------------------------------------------------- */
+
+.index-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 36px;
+}
+
+.index-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px 22px;
+  position: relative;
+}
+
+.index-card-no {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.index-card h3 {
+  font-size: 1.05rem;
+  margin-bottom: 10px;
+}
+
+.index-card p {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.applications h3 {
+  font-size: 1.1rem;
+  margin-bottom: 14px;
+}
+
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.app-tag {
+  background: var(--violet-tint);
+  color: var(--violet);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 999px;
+}
+
+/* ---------------------------------------------------------------------------
+   11. FOOTER
+   --------------------------------------------------------------------------- */
+
+.app-footer {
+  text-align: center;
+  padding: 30px 20px 46px;
+  color: var(--ink-muted);
+  font-size: 0.78rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------------------------------------------------------------------------
+   12. RESPONSIVE
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 880px) {
+  .hero { grid-template-columns: 1fr; }
+  .index-cards { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .navbar-inner { padding: 14px 18px; }
+  .section { padding: 32px 18px; }
+  .hero { padding: 40px 18px 32px; }
+  .section-head.split { align-items: flex-start; }
+  .stub-value { font-size: 1.4rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
