@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Curatia — AI Recommendation System (Content-Based Filtering)</title>
+<meta name="description" content="A client-side recommendation engine that suggests movies, books, and products using content-based filtering and similarity matching." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css" />
+</head>
+<body data-theme="light">
+
+<div class="bg-texture" aria-hidden="true"></div>
+
+<!-- ============================== NAVBAR ============================== -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <div class="logo">
+      <span class="logo-mark">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5L12 2z" fill="currentColor"/></svg>
+      </span>
+      Curatia
+    </div>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark and light mode">
+      <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/><path d="M12 1v3M12 20v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M1 12h3M20 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 12.5A9 9 0 1111.5 3a7 7 0 009.5 9.5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============================== HERO ============================== -->
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Content-Based Filtering &middot; Client-Side AI</p>
+      <h1>Find what you'll love next, <em>matched by what you already do.</em></h1>
+      <p class="hero-sub">
+        Curatia is a fully client-side recommendation engine. Pick a few movies, books,
+        or products you like, and it recommends what to explore next by comparing
+        genres and tags — the same core idea behind real-world recommender systems.
+      </p>
+      <a href="#browse" class="btn btn-primary">Start Browsing</a>
+    </div>
+
+    <!-- Signature element: a ticket-style live dashboard stub -->
+    <div class="dash-stub" aria-label="Live dashboard">
+      <div class="stub-row">
+        <div class="stub-item">
+          <span class="stub-value" id="statTotal">0</span>
+          <span class="stub-label">Catalog Items</span>
+        </div>
+        <div class="stub-item">
+          <span class="stub-value" id="statFavorites">0</span>
+          <span class="stub-label">Your Picks</span>
+        </div>
+        <div class="stub-item">
+          <span class="stub-value" id="statRecs">0</span>
+          <span class="stub-label">Recommended</span>
+        </div>
+      </div>
+      <div class="stub-perf" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- =========================== BROWSE SECTION ========================== -->
+  <section class="section" id="browse">
+    <div class="section-head">
+      <h2>Browse the Catalog</h2>
+      <p>Search, filter, and add anything you like to your preferences shelf.</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by title..." aria-label="Search items by title" />
+      </div>
+
+      <select id="categoryFilter" class="select-input" aria-label="Filter by category">
+        <option value="all">All Categories</option>
+        <option value="Movie">Movies</option>
+        <option value="Book">Books</option>
+        <option value="Product">Products</option>
+      </select>
+
+      <select id="genreFilter" class="select-input" aria-label="Filter by genre">
+        <option value="all">All Genres</option>
+      </select>
+
+      <select id="sortSelect" class="select-input" aria-label="Sort items">
+        <option value="rating-desc">Rating: High to Low</option>
+        <option value="rating-asc">Rating: Low to High</option>
+        <option value="title-asc">Title: A to Z</option>
+      </select>
+    </div>
+
+    <div class="catalog-grid" id="catalogGrid" role="list">
+      <!-- Item cards injected by JS -->
+    </div>
+    <p class="empty-state" id="catalogEmpty" hidden>No items match your search or filters.</p>
+  </section>
+
+  <!-- ========================= PREFERENCES SHELF ========================= -->
+  <section class="section" id="preferences">
+    <div class="section-head split">
+      <div>
+        <h2>My Preferences</h2>
+        <p>These picks are what the recommendation engine will learn from.</p>
+      </div>
+      <div class="section-actions">
+        <button class="btn btn-primary" id="generateBtn">Generate Recommendations</button>
+        <button class="btn btn-ghost" id="resetBtn">Reset Preferences</button>
+      </div>
+    </div>
+
+    <div class="shelf" id="preferencesShelf" role="list">
+      <!-- Selected item chips injected by JS -->
+    </div>
+    <p class="empty-state" id="preferencesEmpty">Your shelf is empty — add a few favorites from the catalog above.</p>
+  </section>
+
+  <!-- ========================= RECOMMENDATIONS ========================= -->
+  <section class="section" id="recommendations">
+    <div class="section-head split">
+      <div>
+        <h2>Recommended For You</h2>
+        <p>Ranked by similarity to your selected preferences.</p>
+      </div>
+      <button class="btn btn-ghost" id="clearRecsBtn">Clear Recommendations</button>
+    </div>
+
+    <div class="loading-state" id="loadingState" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <span>Calculating similarity scores...</span>
+    </div>
+
+    <div class="rec-grid" id="recGrid" role="list"></div>
+    <p class="empty-state" id="recEmpty">No recommendations yet. Select some preferences and click "Generate Recommendations".</p>
+  </section>
+
+  <!-- ============================ HOW IT WORKS ============================ -->
+  <section class="section how-it-works" id="how-it-works">
+    <div class="section-head">
+      <h2>How This Recommendation Engine Works</h2>
+      <p>A quick look at the ideas powering Curatia — all running in your browser.</p>
+    </div>
+
+    <div class="index-cards">
+      <article class="index-card">
+        <span class="index-card-no">01</span>
+        <h3>Recommendation Systems</h3>
+        <p>Software that predicts what a user might like based on data — their past behavior, preferences, or the properties of items they've engaged with. You already meet these every day: "Suggested for you" rows on streaming and shopping sites.</p>
+      </article>
+
+      <article class="index-card">
+        <span class="index-card-no">02</span>
+        <h3>Content-Based Filtering</h3>
+        <p>One of the two classic approaches to recommendations (the other being collaborative filtering). It looks at the <em>attributes of items themselves</em> — here, genres and tags — rather than what other users liked, and recommends items with similar attributes to what you've already chosen.</p>
+      </article>
+
+      <article class="index-card">
+        <span class="index-card-no">03</span>
+        <h3>Similarity Matching</h3>
+        <p>The mathematical core of the engine. Curatia builds a "genre profile" from your selected items, then measures how much each candidate's genre set overlaps with that profile using the <strong>Jaccard similarity</strong> coefficient — shared genres divided by total unique genres involved.</p>
+      </article>
+    </div>
+
+    <div class="applications">
+      <h3>Real-World Applications</h3>
+      <div class="tag-cloud">
+        <span class="app-tag">Netflix &amp; streaming suggestions</span>
+        <span class="app-tag">Spotify playlist radio</span>
+        <span class="app-tag">Amazon "customers also bought"</span>
+        <span class="app-tag">News &amp; article personalization</span>
+        <span class="app-tag">E-learning course paths</span>
+        <span class="app-tag">Dating app matching</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="app-footer">
+  <p>Built with HTML, CSS &amp; JavaScript &middot; Content-Based Filtering with Jaccard Similarity</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
